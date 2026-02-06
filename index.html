@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="lt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EUROTONO RATUKAS</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <h1>EUROTONO RATUKAS</h1>
+
+    </div>
+
+    <div class="wheelPicker">
+      <select id="wheelSelect" class="wheelSelect"></select>
+      <button class="btn" id="addWheelBtn">Pridėti ratuka </button>
+      <button class="btn" id="renameWheelBtn">Pervadinti</button>
+      <button class="btn danger" id="deleteWheelBtn">Trinti</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- LEFT -->
+    <section class="card">
+      <div class="hd">
+        <div>
+          <div style="font-weight:1000;">Užduotys</div>
+        </div>
+        <button class="btn primary" id="addEntryBtn">+ Pridėti</button>
+      </div>
+
+      <div class="bd">
+        <div class="row">
+          <button class="btn primary" id="spinBtn">Sukti</button>
+          <button class="btn" id="respinBtn">Respin</button>
+
+          <label class="pill"><input type="checkbox" id="removeWinner"> Pašalinti laimėtoją </label>
+        </div>
+
+        <div class="row">
+          <label class="pill"><input type="checkbox" id="sound" checked> Garsas</label>
+          <label class="pill"><input type="checkbox" id="slow"> Sukti lėčiau</label>
+          <button class="btn danger" id="resetBtn">Ištrinti viską</button>
+        </div>
+
+
+        <div class="entries" id="entries"></div>
+
+        <div class="history" id="history"></div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <section class="card wheelWrap">
+      <div class="hd">
+        <div>
+          <div style="font-weight:1000;">
+            <span id="currentWheelName">—</span> - RATUKAS
+          </div>
+        </div>
+        <!--<div class="row">
+          <div class="pill">Space kad prasukti</div>
+          <button class="btn" id="pickCenterImgBtn">Nuotrauka centre</button>
+          <button class="btn danger" id="clearCenterImgBtn">Pašalinti nuotrauką</button>
+        </div>-->
+      </div>
+
+      <div class="wheelArea">
+        <div class="pointer" aria-hidden="true"></div>
+        <canvas id="wheel" width="900" height="900"></canvas>
+      </div>
+
+      <div class="winner">
+        <div>
+          <div class="label">Išsukta užduotis</div>
+          <div class="name" id="winnerName">—</div>
+        </div>
+        <div class="right">
+
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Hidden file input for center image -->
+  <input id="centerImgPicker" type="file" accept="image/*" hidden />
+
+  <!-- ADVANCED MODAL -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <div class="modalHd">
+        <div class="mTitle">Advanced</div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span class="pill" id="modalCounter">Entry 1 / 1</span>
+          <button class="btn" id="closeModalBtn">✕</button>
+        </div>
+      </div>
+
+      <div class="modalBd">
+        <div class="row" style="justify-content:space-between;">
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button class="btn" id="prevEntryBtn">←</button>
+            <button class="btn" id="nextEntryBtn">→</button>
+          </div>
+
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button class="btn" id="dupEntryBtn">Duplikuoti</button>
+            <button class="btn danger" id="delEntryBtn">Pašalinti</button>
+            <button class="btn primary" id="addEntryModalBtn">+ Pridėti</button>
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top:12px;">
+          <div class="field">
+            <label><input id="mVisible" type="checkbox" /> Matomas</label>
+          </div>
+
+          <div class="field">
+            <label>Šansai</label>
+            <div class="pill"><span id="mProb">0%</span></div>
+          </div>
+
+          <div class="field" style="grid-column: 1 / -1;">
+            <label>Text</label>
+            <input id="mText" type="text" />
+          </div>
+
+          <div class="field">
+            <label>Spalva</label>
+            <input id="mColor" type="color" />
+          </div>
+
+          <div class="field">
+            <label>Pirmenybė</label>
+            <div class="row">
+              <button class="btn" id="mMinus">−</button>
+              <input id="mWeight" type="number" min="1" step="1" value="1" style="max-width:120px;" />
+              <button class="btn" id="mPlus">+</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Kitas ratukas po šio (Next wheel)</label>
+            <select id="mNextWheel" class="wheelSelect"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modalActions">
+        <button class="btn" id="cancelModalBtn">Cancel</button>
+        <button class="btn primary" id="okModalBtn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT OVERLAY (po spin) -->
+  <div class="overlay" id="resultOverlay">
+    <div class="modal" style="max-width:540px;">
+      <div class="modalHd">
+        <div class="mTitle">Išsukta</div>
+        <button class="btn" id="closeResultBtn">Uždaryti</button>
+      </div>
+
+      <div class="modalBd">
+        <div id="resultText" style="font-size:28px; font-weight:1000;">—</div>
+        <div class="tiny" id="resultHint" style="margin-top:8px;">
+        </div>
+      </div>
+
+      <div class="modalActions">
+        <button class="btn" id="respinResultBtn">Respin</button>
+        <button class="btn primary" id="spinResultBtn">Sukti naują</button>
+        <button class="btn ok" id="openNextWheelBtn" style="display:none;">Sukti „užduoties pavadinimas“ ratuką</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
